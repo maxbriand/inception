@@ -1,15 +1,20 @@
-# Use the official MariaDB image as the base
-FROM mariadb:latest
+# Use the lastest debian version
+FROM debian:latest
 
-# Environment variables for database credentials, configured through the .env file
-# These are not hardcoded here; Docker Compose will pass the values during runtime.
-ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-ENV MYSQL_DATABASE=${MYSQL_DATABASE}
-ENV MYSQL_USER=${MYSQL_USER}
-ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
+# Update apt
+RUN apt update -y
+RUN apt upgrade -y
+RUN apt install mariadb-server -y
 
-# Expose the default MariaDB port
-EXPOSE 3306
+#update Mariadb conf
+COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
-# The default command to run MariaDB
-CMD ["mysqld"]
+
+
+
+
+
+
+
+# # The default command to run MariaDB
+# CMD ["mysqld"]
