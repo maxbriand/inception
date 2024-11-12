@@ -1,0 +1,20 @@
+FROM debian:bullseye
+
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get -y install wget
+
+RUN apt-get install -y php7.4 \
+	php7.4-fpm\
+	php7.4-mysql\
+	mariadb-client
+
+RUN wget https://wordpress.org/wordpress-6.6.2.tar.gz -P /var/www
+
+RUN cd /var/www && tar -xzf wordpress-6.6.2.tar.gz && rm wordpress-6.6.2.tar.gz
+
+RUN chown -R root:root /var/www/wordpress
+
+COPY conf/www.conf /etc/php/7.4/fpm/pool.d/
+
+

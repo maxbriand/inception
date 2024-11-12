@@ -1,5 +1,5 @@
 # Use Debian as the base image for stability and package availability
-FROM debian:latest
+FROM debian:bullseye
 
 # Download nginx, curl and openssl (for generate TLS certificates) at runtime
 RUN apt update

@@ -1,0 +1,37 @@
+#-------------------------------------#
+# Purpose:
+
+  # Designed to simplify the use of multiple application like :
+  # Nginx
+  # Wordpress: website
+  # MariaDB: for database
+
+  # Service steps:
+    # 1st: depends_on - check dependencies before building the container
+    # 2nd: build - launch each service in separate containers
+    # 3rd: environment - setting environment variables of the container (API keys, passwords, database credentials securely)
+    # 4th: volumes - specify the volume location, where datas would be store if there if the container is restarted
+    # 7th: restart - specify behavior if a container is stopped
+    # Connect these containers themselves
+
+
+#------------------------------------#
+
+# Defines all services (containers) for the application.
+services:
+  nginx:
+    depends_on: # should started wordpress before wordpress
+      - wordpress
+    build: requirements/nginx/.
+    restart: on-failure
+
+  wordpress:
+    depends_on: # should start mariadb before wordpress
+      - mariadb
+    build: requirements/wordpress/.
+    restart: on-failure
+
+  mariadb:
+    build: requirements/mariadb/.
+    restart: on-failure
+

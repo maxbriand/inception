@@ -92,10 +92,12 @@ That's a common error when a dockerfile is not correctly set and we launch the d
 The command: "docker images", provide a list of our docker images.
 
 - How can I launch/use the image?
-Command in the directory: docker run "image_name"
+Command in the directory: 
+	docker run "image_name"
 
 - How can I run it using the terminal of the server (nginx)?
-Add -it option: docker run -it "image_name"
+Add -it option: 
+	docker run -it "image_name"
 
 - How can we delete an image?
 Command: docker rmi "image_name" -> doesnt work correctly
@@ -133,6 +135,44 @@ Command: mkdir -p /var/run/nginx
 
 - Then?
 COPY conf/nginx.conf /etc/nginx/nginx.conf
+
+
+
+
+# MariaDB Part
+
+- What's the purpose of MariaDB?
+Store the application web datas.
+
+- How can we basically use MariaDB?
+We can use MariaDB from its shell.
+This is the command to launch the MariaDB shell:
+1) service mariadb start
+2) mysql -u root -p
+
+- What's the exact purpose of this second command?
+mysql: open the command line mariadb system.
+-u root: use the root username
+-p: prompt for a password
+
+- Which basics commands can I type on mariaDB shell?
+	1) SHOW DATABASES: display database list
+	2) CREATE DATABASE "database_name": create database
+	3) DROP DATABASE "database_name": delete database
+	4) USE "database_name": select a specific database
+	5) SHOW TABLES: display tables of the selected database
+To execute the command I have to add a semi colon at the end: ";"
+
+- 
+
+
+
+
+
+
+
+
+
 
 
 

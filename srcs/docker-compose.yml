@@ -1,96 +1,57 @@
-#------------------------------------#
-# Purpose:
-
-	# Create to simplify the use of multiple application like :
-		# Nginx
-		# Wordpress: website
-		# MariaDB: for database
-
-	# Each application is put in its container
-	# and container can communicate themselves
-
-#------------------------------------#
-
-
-# Specifies the Docker Compose version; version 3.8 supports recent features and good stability.
-version: '3.8'
-
-# Defines all services (containers) for the application.
 services:
-  # Nginx Service
   nginx:
-	# Specifies the location of the Dockerfile for building this service.
-	build:
-	  context: ./srcs/requirements/nginx
-	# Assigns a name to the container for easier reference and management.
-	container_name: nginx_container
-	# Maps port 443 on the host to port 443 in the container for HTTPS access.
-	ports:
-	  - "443:443"  # Exposing port 443 for HTTPS
-	# Connects this container to the custom network for secure inter-service communication.
-	networks:
-	  - inception_network
-	# Mounts a volume to the Nginx container for shared access to WordPress files.
-	volumes:
-	  - wordpress_files:/var/www/html
-	# Sets environment variables, here loading DOMAIN_NAME from the .env file.
-	environment:
-	  - DOMAIN_NAME=${DOMAIN_NAME} # Load from .env file
+    depends_on:
+      - wordpress
+      - mariadb
+    build: requirements/nginx/. #this is a test
+    #environment: Any credentials, API keys, environment variables must be set inside a .env file during the evaluation. In case any credentials, API keys are available in the git repository and outside of the .env file created during the evaluation, the evaluation stop and the mark is 0.
+    env_file:
+      - .env
+    volumes:
+      - web:/var/www/html
+    ports:
+      - "443:443"
+    networks:
+      inception:
+    container_name: nginx
 
-  # WordPress Service
-#   wordpress:
-	# Specifies the location of the Dockerfile for building this service.
-	#build:
-	#  context: ./srcs/requirements/wordpress
-	## Assigns a name to the container for easier reference and management.
-	#container_name: wordpress_container
-	## Connects this container to the custom network for inter-service communication.
-	#networks:
-	#  - inception_network
-	## Ensures that the MariaDB service is started before this one (database dependency).
-	#depends_on:
-	#  - mariadb
-	## Mounts the same volume as Nginx to share WordPress files.
-	#volumes:
-	#  - wordpress_files:/var/www/html
-	## Configures environment variables for database connection, loaded from the .env file.
-	#environment:
-	#  - WORDPRESS_DB_HOST=mariadb:3306
-	#  - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
-	#  - WORDPRESS_DB_USER=${MYSQL_USER}
-	#  - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
 
-  # MariaDB Service (Database)
+
+  wordpress:
+    build: requirements/wordpress/.
+    container_name: wp-php
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - web:/var/www/html
+    networks:
+      inception:
   mariadb:
-	# Specifies the location of the Dockerfile for building this service.
-	build:
-	  context: ./srcs/requirements/mariadb
-	# Assigns a name to the container for easier reference and management.
-	container_name: mariadb_container
-	# Connects this container to the custom network for secure inter-service communication.
-	networks:
-	  - inception_network
-	# Mounts a volume to store the database files persistently.
-	volumes:
-	  - wordpress_db:/var/lib/mysql
-	# Configures environment variables for database setup, using values from the .env file.
-	environment:
-	  - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-	  - MYSQL_DATABASE=${MYSQL_DATABASE}
-	  - MYSQL_USER=${MYSQL_USER}
-	  - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    build: requirements/mariadb/.
+    env_file:
+      - .env
+    container_name: mariadb
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      inception:
 
-# Defines custom network(s) for communication between the services.
-networks:
-  inception_network:
-	# Uses the 'bridge' driver, which is suitable for isolated communication between containers.
-	driver: bridge
-
-# Defines persistent storage volumes to keep data intact even if containers are removed.
 volumes:
-  wordpress_db:
-	# Uses the 'local' driver to store MariaDB database files on the host.
-	driver: local
-  wordpress_files:
-	# Uses the 'local' driver to store WordPress files on the host, accessible to both Nginx and WordPress.
-	driver: local
+  database:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/hbelle/data/mysql
+      o: bind
+  web:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/hbelle/data/wordpress
+      o: bind
+  portainer_data:
+
+networks:
+  inception:
