@@ -14,8 +14,8 @@
     # 2nd: build - launch each service in separate containers
     # 3rd: environment (not hard-coded in the file) - setting environment variables of the container (API keys, passwords, database credentials securely)
     # 4th: volumes - specify the volume location, where datas would be store if there if the container is restarted
-      # mydevice-file_to_save
-    # 5th: ports - expose containers port to the hors
+      # my_device_location:file_to_save
+    # 5th: ports - expose containers port, to access from outside
     # 6th: network - configurate the network for container communication + setting the name of the network
     # 7th: restart - specify behavior if a container is stopped
     # Connect these containers themselves
@@ -46,6 +46,8 @@ services:
       - wp_volume:/var/www/html
     networks:
       - inception
+    ports:
+      - 443:443 # use SSL
     restart: on-failure
 
   wordpress:
@@ -68,6 +70,8 @@ services:
       - mdb_volume:/var/lib/mysql
     networks:
       - inception
+    ports:
+      - 3306:3306
     restart: on-failure
 
 volumes:
@@ -81,8 +85,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      # /var/lib/docker/volumes/srcs_marilaladb/_data'
-      device: ~/data/mariadb # change to mbriand later
+      device: ~/data/mariadb
       o: bind
 
 networks:
