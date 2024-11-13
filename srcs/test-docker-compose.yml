@@ -34,7 +34,7 @@ services:
       - .env
       #secrets files to add?
     volumes:
-      - wp:/var/www/html
+      - aa:/var/www/html
     networks:
       - inception
     restart: on-failure
@@ -46,7 +46,7 @@ services:
     env_file: 
       - .env
     volumes:
-      - wp:/var/www/html
+      - aa:/var/www/html
     networks:
       - inception
     restart: on-failure
@@ -56,28 +56,25 @@ services:
     env_file: 
       - .env
     volumes:
-      - mdb:/var/lib/mysql
+      - database:/var/lib/mysql
     networks:
       - inception
     restart: on-failure
 
 volumes:
-  wp:
+  database:
     driver: local
     driver_opts:
       type: none
-      device: ~/data/wordpress
+      device: /home/hbelle/data/mysql
       o: bind
-  mdb:
+  aa:
     driver: local
     driver_opts:
       type: none
-      device: ~/data/mariadb
+      device: /home/hbelle/data/wordpress
       o: bind
-
 
 networks:
   inception:
     driver: bridge
-
-  
