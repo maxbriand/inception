@@ -1,0 +1,56 @@
+services:
+  nginx:
+    depends_on:
+      - wordpress
+      - mariadb
+    build: requirements/nginx/. #this is a test
+    #environment: Any credentials, API keys, environment variables must be set inside a .env file during the evaluation. In case any credentials, API keys are available in the git repository and outside of the .env file created during the evaluation, the evaluation stop and the mark is 0.
+    env_file:
+      - .env
+    volumes:
+      - aa:/var/www/html
+    ports:
+      - "443:443"
+    networks:
+      inception:
+    container_name: nginx
+
+  wordpress:
+    build: requirements/wordpress/.
+    container_name: wp-php
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - aa:/var/www/html
+    networks:
+      inception:
+
+  mariadb:
+    build: requirements/mariadb/.
+    env_file:
+      - .env
+    container_name: mariadb
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      inception:
+
+volumes:
+  database:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mbriand/data/mysql
+      o: bind
+  aa:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mbriand/data/wordpress
+      o: bind
+  portainer_data:
+
+networks:
+  inception:
