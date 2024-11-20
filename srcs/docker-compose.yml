@@ -21,7 +21,7 @@
     # Connect these containers themselves
 
     # Orchestrate containers:
-      	# docker-compose up 
+      	# docker compose up 
 	# Remove logs:
 		# dc up -d
     # Remove volume + containers ? if orchestrate error on volumes: 
@@ -30,71 +30,70 @@
 		# docker volume ls
 	# delete all volumes:
 		#docker volume rm $(docker volume ls -q)
+    #docker system prune -af
 #------------------------------------#
 
 services:
+  wordpress:
+    container_name: wp_inception
+    depends_on: # to start mariadb before wordpress
+      - mariadb
+    build: requirements/wordpress/.
+    env_file: 
+      - .env
+      - ../secrets/db_password.txt
+      - ../secrets/credentials
+    volumes:
+      - wp_volume:/var/www/wordpress
+    networks:
+      - inception
+    restart: on-failure
+
   nginx:
     container_name: nginx_inception
-    # depends_on: # to start wordpress before nginx
-    #   - wordpress
+    depends_on: # to start wordpress before nginx
+      - wordpress
     build: requirements/nginx/.
     env_file:
       - .env
       - ../secrets/credentials
-    # volumes:
-    #   - wp_volume:/var/www/html
-    # networks:
-    #   - inception
+    volumes:
+      - wp_volume:/var/www/wordpress
+    networks:
+      - inception
     ports:
       - 80:80
       # - 443:443 # use SSL
     restart: on-failure
 
-  # wordpress:
-  #   container_name: wp_inception
-  #   # depends_on: # to start mariadb before wordpress
-  #   #   - mariadb
-  #   build: requirements/wordpress/.
-  #   env_file: 
-  #     - .env
-  #     - ../secrets/db_password.txt
-  #     - ../secrets/credentials
-  #   volumes:
-  #     - wp_volume:/var/www/html
-  #   networks:
-  #     - inception
-  #   restart: on-failure
-# 
-  # mariadb:
-    # container_name: mdb_inception
-    # build: requirements/mariadb/.
-    # env_file: 
-      # - .env
-      # - ../secrets/db_password.txt
-      # - ../secrets/db_root_password.txt
-      # - ../secrets/credentials
+  mariadb:
+    container_name: mdb_inception
+    build: requirements/mariadb/.
+    env_file: 
+      - .env
+      - ../secrets/db_password.txt
+      - ../secrets/db_root_password.txt
+      - ../secrets/credentials
     # volumes:
       # - mdb_volume:/var/lib/mysql
-    # networks:
-      # - inception
-    # ports:
-      # - 3306:3306
-    # restart: on-failure
-# 
-# volumes:
-#   wp_volume:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       device: ~/data/wordpress
-#       o: bind
-  # mdb_volume:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device: ~/data/mariadb
-  #     o: bind
+    networks:
+      - inception
+    restart: on-failure
 
-# networks:
-#   inception:
-#     driver: bridge
+volumes:
+  wp_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ~/data/wordpress
+      o: bind
+  mdb_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ~/data/mariadb
+      o: bind
+
+networks:
+  inception:
+    driver: bridge

@@ -3,21 +3,21 @@
 # **************************************************************************** #
 
 # Variables
-DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
+DOCKER_COMPOSE_PATH = srcs/docker-compose.yml
 
 # Targets
 all: up
 
 up:
-	@$(DOCKER_COMPOSE) up -d
+	@docker compose -f $(DOCKER_COMPOSE_PATH) up --build
 	@echo "Docker containers are now running."
 
 down:
-	@$(DOCKER_COMPOSE) down
+	@docker compose -f $(DOCKER_COMPOSE_PATH) down
 	@echo "Docker containers have been stopped."
 
 clean: down
-	@$(DOCKER_COMPOSE) rm -f
+	@docker system prune -af
 	@echo "Docker containers have been removed."
 
 re: clean all

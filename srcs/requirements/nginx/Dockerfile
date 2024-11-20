@@ -38,7 +38,11 @@ RUN rm -rf /var/lib/apt/lists/*
 # apt-get clean
 
 # Step 3: Copy your custom Nginx configuration (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
+COPY conf/default.conf /etc/nginx/nginx.conf
+
+RUN mkdir -p /var/www/wordpress
+RUN chmod 755 /var/www/wordpress
+RUN chown -R www-data:www-data /var/www/wordpress
 
 # Step 5: Ensure Nginx listens on all network interfaces
 # RUN echo 'server { listen 0.0.0.0:80; }' > /etc/nginx/conf.d/default.conf
