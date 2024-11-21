@@ -1,4 +1,40 @@
 # inception
+
+#-------------------------------------#
+# Purpose dockerfile:
+
+  # START FINISHING VOLUME CONFIGURATION TO STORE DATAS
+
+
+  # Designed to simplify the use of multiple application like :
+  # Nginx
+  # Wordpress: website
+  # MariaDB: for database
+
+  # Service steps:
+    # 1st: depends_on - check dependencies before building the container
+    # 2nd: build - launch each service in separate containers
+    # 3rd: environment (not hard-coded in the file) - setting environment variables of the container (API keys, passwords, database credentials securely)
+    # 4th: volumes - specify the volume location, where datas would be store if there if the container is restarted
+      # my_device_location:file_to_save
+    # 5th: ports - expose containers port, to access from outside
+    # 6th: network - configurate the network for container communication + setting the name of the network
+    # 7th: restart - specify behavior if a container is stopped
+    # Connect these containers themselves
+
+    # Orchestrate containers:
+      	# docker compose up 
+	# Remove logs:
+		# dc up -d
+    # Remove volume + containers ? if orchestrate error on volumes: 
+		# dc down -v: remove all containers 
+	# check machine volumes
+		# docker volume ls
+	# delete all volumes:
+		#docker volume rm $(docker volume ls -q)
+    #docker system prune -af
+#------------------------------------#
+
 docker 42 project
 
 - What's the goal of the project?
