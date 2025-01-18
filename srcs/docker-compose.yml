@@ -1,4 +1,20 @@
 services:
+  nginx:
+    container_name: nginx_inception
+    depends_on:
+      - wordpress
+    build: requirements/nginx/.
+    env_file:
+      - .env
+      - ../secrets/credentials
+    volumes:
+      - wp_volume:/var/www/html
+    networks:
+      - inception
+    ports:
+      - 443:443
+    restart: on-failure
+  
   wordpress:
     container_name: wp_inception
     depends_on:
@@ -9,25 +25,9 @@ services:
       - ../secrets/db_password.txt
       - ../secrets/credentials
     volumes:
-      - wp_volume:/var/www/wordpress
+      - wp_volume:/var/www/html
     networks:
       - inception
-    restart: on-failure
-
-  nginx:
-    container_name: nginx_inception
-    depends_on:
-      - wordpress
-    build: requirements/nginx/.
-    env_file:
-      - .env
-      - ../secrets/credentials
-    volumes:
-      - wp_volume:/var/www/wordpress
-    networks:
-      - inception
-    ports:
-      - 443:443
     restart: on-failure
 
   mariadb:
